@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Jogo do Palpite </title>
+	
+</head>
+
+<body>
+	<h1>Jogo da adivinhação</h1>
+	<p> Conjunto de Regras </p>
+	<ul>
+		<li>O computador sorteará um número entre 1 e 100</li>
+		<li>Você envia um número e ele diz se é mais alto</li>
+		<li>Ou baixo</li>
+			<ol>
+				<li> Você acertou! </li>
+				<li> Você errou! baixo </li>
+				<li> Você errou! alto</li>
+			</ol>
+	</ul>
+	<div class="form">
+		<label for="campoPalpite">Digite seu palpite: </label>
+		<input type="" id="campoPalpite" class="campoPalpite">
+		<input type="submit" value="Enviar palpite" class="envioPalpite">
+	</div>
+	
+	<div class="resultados">
+		<p class="palpites"></p>
+		<p class="lastResults"></p>
+		<p class="hiLo"></p>
+	
+	</div>
+	
+</body>
+<script>
+	var randomNum = Math.floor(Math.random() *100)+1;
+	window.alert(randomNum);
+	var palpites = document.querySelector('.palpites');
+	var lastResults = document.querySelector('.lastResults');
+	var hiLo = document.querySelector('.hiLo');
+	var campoPalpite = document.querySelector('.campoPalpite');
+	var envioPalpite = document.querySelector('.envioPalpite');
+	var countPalpites = 1;
+	function conferir(){
+		var palpiteUser = Number(campoPalpite.value);
+		if(countPalpites === 1){
+			palpites.textContent = 'Palpites Anteriores: ';
+		}
+		palpites.textContent += palpiteUser + '';
+		if(palpiteUser === randomNum){
+			lastResults.textContent = 'Parabéns! Você acertou!';
+			hiLo.textContent = '';
+			configFimDeJogo();
+		}
+		else if(countPalpites === 5){
+			lastResults.textContent = 'Errou seu burro';
+			hiLo.textContent = '';
+			configFimDeJogo();
+		}
+		else{
+			lastResults.textContent = 'Errou seu lixo';
+			if(palpiteUser < randomNum){
+				hiLo.textContent = 'Mais alto';
+			} else if(palpiteUser > randomNum){
+				hiLo.textContent = 'Mais baixo';
+			}
+		}
+		countPalpites++;
+		campoPalpite.value='';
+		campoPalpite.focus();
+		
+	}
+	
+	envioPalpite.addEventListener('click', conferir);
+	function configFimDeJogo(){}
+	
+	</script>
+</html>
