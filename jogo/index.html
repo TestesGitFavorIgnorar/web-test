@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Guess the number </title>
+	<style>
+		.divTitle {
+			border: 5px outset blue;
+			background-color: lightblue;
+		}
+		.divRules {
+			border: 5px outset blue;
+			background-color: white;
+		}
+		.imagem {
+			border: 1px outset black;
+			margin-top: 3px;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100%;
+			max-width: 480px;
+			min-height: 270px;
+			height: auto;
+			background-color: white;
+			background-image: url('media/div_bg.jpg');
+		}
+		#bg {
+			<!--background-image: url('media/win_bg.jpg');-->
+		}
+      html {
+        font-family: sans-serif;
+      }
+      body {
+        width: 50%;
+        min-width: 480px;
+        margin: 0 auto;
+		background-color: gray;
+		text-align: center;
+		background-image: url('media/idle_bg.jpg');
+      }
+      .ultimoResultado {
+        color: white;
+        padding: 3px;
+      }
+    </style>
+</head>
+
+<body>
+	<br>
+	
+	<div class="divTitle">
+	<h1>Jogo da adivinhação</h1>
+	</div>
+	<div class="divRules">
+	<div class="imagem" id="bg">
+	<br><br><br><br><br><br><br><br><br>
+	</div>
+	<p> Conjunto de Regras: </p>
+	<p>O computador sorteará um número entre 1 e 100</p>
+	<p>Você envia um número e ele diz se é mais alto ou baixo</p>
+		<!--<ol>
+			<li> Você acertou! </li>
+			<li> Você errou! baixo </li>
+			<li> Você errou! alto</li>
+		</ol>-->
+	<br><br><br>
+	<div class="form">
+		<p class="tLeft">Tentativas restantes: 10</p>
+		<label for="campoPalpite">Digite seu palpite: </label>
+		<input type="" id="campoPalpite" class="campoPalpite">
+		<input type="submit" value="Enviar palpite" class="envioPalpite">
+	</div>
+	
+	<div class="resultados">
+		<p class="palpites"></p>
+		<p class="lastResults"></p>
+		<p class="hiLo"></p>
+	
+	</div>
+	</div>
+	
+</body>
+<script>
+	var randomNum = Math.floor(Math.random() *100)+1;
+	var randomText = 0;
+	var randomErrN = 0;
+	var palpites = document.querySelector('.palpites');
+	var lastResults = document.querySelector('.lastResults');
+	var hiLo = document.querySelector('.hiLo');
+	var campoPalpite = document.querySelector('.campoPalpite');
+	var envioPalpite = document.querySelector('.envioPalpite');
+	var countPalpites = 1;
+	var tLeft = document.querySelector('.tLeft');
+	var tLeft_count = 10;
+	var audio_derrota = new Audio('media/derrota.mp3');
+	var audio_vitoria = new Audio('media/vitoria.mp3');
+	var audio_nan = new Audio('media/nan.mp3');
+	var erro1 = new Audio('media/erro1.mp3');
+	var erro2 = new Audio('media/erro2.mp3');
+	var erro3 = new Audio('media/erro3.mp3');
+	
+	
+	
+	function conferir(){
+		var palpiteUser = Number(campoPalpite.value);
+		var diff = Math.abs(palpiteUser - randomNum);
+		if(countPalpites === 1){
+			palpites.textContent = 'Palpites Anteriores: ';
+		}
+		if(palpiteUser === randomNum){
+			palpites.textContent += palpiteUser + ' ';
+			document.getElementById('bg').style.backgroundImage="url(media/win_bg.jpg)";
+			audio_vitoria.play();
+			lastResults.textContent = 'Parabéns! Você acertou!';
+			lastResults.style.backgroundColor = 'green';
+			hiLo.textContent = '';
+			configFimDeJogo();
+		}
+		else if(isNaN(palpiteUser)){
+			document.getElementById('bg').style.backgroundImage="url(media/nan_bg.jpg)";
+			audio_nan.play();
+			tLeft_count--;
+			tLeft.textContent = 'Tentativas restantes: '+tLeft_count;
+			lastResults.style.backgroundColor = 'pink';
+			lastResults.textContent = 'Isso nem é um número';
+			
+		}
+		else if(countPalpites === 10){
+			document.getElementById('bg').style.backgroundImage="url(media/lose_bg.jpg)";
+			audio_derrota.play();
+			tLeft_count--;
+			tLeft.textContent = 'Tentativas restantes: '+tLeft_count;
+			lastResults.textContent = 'Que pena! Você perdeu';
+			hiLo.textContent = '';
+			configFimDeJogo();
+		}
+		else if(palpiteUser > 100 || palpiteUser<0){
+			document.getElementById('bg').style.backgroundImage="url(media/out_of_range_bg.jpg)";
+			erro3.play();
+			tLeft_count--;
+			tLeft.textContent = 'Tentativas restantes: '+tLeft_count;
+			lastResults.style.backgroundColor = 'cyan';
+			lastResults.textContent = 'Não é um número válido para o nosso joguinho, usuário espertinho';
+			hiLo.textContent = '';}
+		else{
+			palpites.textContent += palpiteUser + ' ';
+			randomErrN = Math.floor(Math.random() * 100);
+			if(randomErrN <= 40){ 
+				document.getElementById('bg').style.backgroundImage="url(media/fail1_bg.gif)";
+				erro1.play();
+			}
+			else if(randomErrN >= 60){ 
+				document.getElementById('bg').style.backgroundImage="url(media/fail2_bg.jpg)";
+				erro2.play();
+			}
+			else{ 
+				document.getElementById('bg').style.backgroundImage="url(media/fail3_bg.gif)";
+				erro3.play();
+			}
+			tLeft_count--;
+			tLeft.textContent = 'Tentativas restantes: '+tLeft_count;
+			var diff = Math.abs(palpiteUser - randomNum);
+			if(diff >= 10) lastResults.style.backgroundColor = 'rgb(255, 50, 50)';
+			else lastResults.style.backgroundColor = 'orange';
+			randomText = Math.floor(Math.random() * 6);
+			if(randomText === 1) lastResults.textContent = 'Errou';
+			else if(randomText === 2) lastResults.textContent = 'Não é esse';
+			else if(randomText === 3) lastResults.textContent = 'Chegou perto (ou não)';
+			else if(randomText === 4) lastResults.textContent = 'Acertou se o objetivo era acertar um número errado';
+			else if(randomText === 5) lastResults.textContent = 'Mais sorte da próxima vez';
+			else lastResults.textContent = 'Nope';
+			if(palpiteUser < randomNum){
+				hiLo.textContent = 'Tente um mais alto';
+			} else if(palpiteUser > randomNum){
+				hiLo.textContent = 'Tente um mais baixo';
+			}
+		}
+		countPalpites++;
+		campoPalpite.value='';
+		campoPalpite.focus();
+		
+	}
+	
+	envioPalpite.addEventListener('click', conferir);
+	function configFimDeJogo() {
+		campoPalpite.disabled = true;
+		envioPalpite.disabled = true;
+		botaoReinicio = document.createElement('button');
+		botaoReinicio.textContent = 'Iniciar novo jogo';
+		document.body.appendChild(botaoReinicio);
+		botaoReinicio.addEventListener('click', reiniciarJogo);
+	}
+	
+	function reiniciarJogo() {
+		document.getElementById('bg').style.backgroundImage="url(media/div_bg.jpg)";
+		countPalpites = 1;
+		tLeft_count = 10;
+		tLeft.textContent = 'Tentativas restantes: '+tLeft_count;
+		var reiniciarParas = document.querySelectorAll('.resultados p');
+		for (var i = 0 ; i < reiniciarParas.length ; i++) {
+			reiniciarParas[i].textContent = '';
+		}
+
+		botaoReinicio.parentNode.removeChild(botaoReinicio);
+
+		campoPalpite.disabled = false;
+		envioPalpite.disabled = false;
+		campoPalpite.value = '';
+		campoPalpite.focus();
+
+		lastResults.style.backgroundColor = 'white';
+
+		randomNum = Math.floor(Math.random() * 100) + 1;
+	}
+	
+	</script>
+</html>
